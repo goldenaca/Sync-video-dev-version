@@ -84,6 +84,7 @@ function YoutubeVideo({ videoId, socket, roomId, joinSync, setVideoId }) {
       if (isLocalEvent.current.localPlayer) {
         switch (event.data) {
           case 1:
+            console.log("E - play");
             socket.emit("serverEventsHandler", {
               type: "playerEvent",
               event: "PLAY",
@@ -92,6 +93,7 @@ function YoutubeVideo({ videoId, socket, roomId, joinSync, setVideoId }) {
             });
             break;
           case 2:
+            console.log("E - stop");
             socket.emit("serverEventsHandler", {
               type: "playerEvent",
               event: "PAUSE",
@@ -131,11 +133,15 @@ function YoutubeVideo({ videoId, socket, roomId, joinSync, setVideoId }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [videoId, socket]);
 
+  //Joining Rooms
+  useEffect(() => {
+    if (!socket || !roomId) return;
+    socket.emit("roomHandler", { roomId, joinSync });
+  }, [joinSync, roomId, socket]);
+
   //  SockerIO Listeneer
   useEffect(() => {
     if (!socket || !roomId) return;
-    //Joining Rooms
-    socket.emit("roomHandler", { roomId, joinSync });
     //Server Listeneer
     socket.on("serverEventsHandler", ({ type, event, currentData }) => {
       switch (type) {

@@ -10,36 +10,45 @@ function App() {
   const [videoId, setVideoId] = useState("uD4izuDMUQA");
   const [roomId, setRoomId] = useState(null);
   const [joinSync, setJoinSync] = useState(false);
-  const [mySocket, setMySocket] = useState(null);
+  const [mySocket, setMySocket] = useState({ id: false });
 
   useEffect(() => {
-    const socket = io.connect("http://localhost:3000/", {
+    const socket = io.connect("https://sync-yt-video.herokuapp.com/", {
       transports: ["websocket"],
     });
-    setMySocket(socket);
+
+    const loading = setInterval(() => {
+      if (socket.id) {
+        setMySocket(socket);
+        clearInterval(loading);
+      }
+    }, 100);
   }, []);
 
   return (
     <div className="app-container">
       <SearchBar setVideoId={setVideoId} />
-      <main className="main-container">
-        <NavBar
-          roomId={roomId}
-          setRoomId={setRoomId}
-          setJoinSync={setJoinSync}
-        />
-
-        <div className="deep-main-container">
-          <YoutubeVideo
-            setVideoId={setVideoId}
-            videoId={videoId}
-            socket={mySocket}
+      {mySocket.id ? (
+        <main className="main-container">
+          <NavBar
             roomId={roomId}
-            joinSync={joinSync}
+            setRoomId={setRoomId}
+            setJoinSync={setJoinSync}
           />
-          {mySocket ? <RoomChat socket={mySocket} roomId={roomId} /> : null}
-        </div>
-      </main>
+          <div className="deep-main-container">
+            <YoutubeVideo
+              setVideoId={setVideoId}
+              videoId={videoId}
+              socket={mySocket}
+              roomId={roomId}
+              joinSync={joinSync}
+            />
+            <RoomChat socket={mySocket} roomId={roomId} />
+          </div>
+        </main>
+      ) : (
+        <p className="loading-screen"> LOADING </p>
+      )}
     </div>
   );
 }

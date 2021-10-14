@@ -13,3 +13,14 @@
   justify-content: space-evenly;
   align-items: center;
 }
+
+.loading-screen {
+  color: aliceblue;
+  font-size: 80px;
+  letter-spacing: 5px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  font-family: Arial, Helvetica, sans-serif;
+}

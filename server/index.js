@@ -16,7 +16,7 @@ app.use(function (request, res, next) {
 const syncOnJoin = async ({ socket, roomId }) => {
   const usersId = await io.in(roomId).allSockets();
   const uniqueUsersId = await [...usersId];
-  console.log(uniqueUsersId);
+  setTimeout(() => console.log(uniqueUsersId), 500);
   if (!uniqueUsersId) return;
   socket.to(uniqueUsersId[0]).emit("serverEventsHandler", {
     type: "joinAskData",
